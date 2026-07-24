@@ -16,6 +16,7 @@ streamlit-folium>=0.18.0
 # Visualization
 matplotlib>=3.7.0
 plotly>=5.18.0
+seaborn>=0.13.0
 
 # Web Application
 streamlit>=1.30.0
@@ -30,6 +31,3 @@ openpyxl>=3.1.0
 geopandas>=0.14.0
 shapely>=2.0.0
 pyproj>=3.6.0
-
-# Optional (if used in EDA)
-seaborn>=0.13.0

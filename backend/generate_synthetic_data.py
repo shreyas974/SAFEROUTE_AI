@@ -41,8 +41,6 @@ areas = {
     "Marathahalli": (12.9591, 77.6974),
     "Bellandur": (12.9279, 77.6762),
     "Malleshwaram": (13.0035, 77.5706),
-
-    # Added Areas
     "Basavanagudi": (12.9417, 77.5713),
     "Majestic": (12.9779, 77.5713),
     "KR Puram": (13.0080, 77.6956),

@@ -1,6 +1,9 @@
 # Virtual Environment
 venv/
 
+# Python Virtual Environment
+.venv/
+
 # Python Cache
 __pycache__/
 *.py[cod]
@@ -23,4 +26,6 @@ models/*.joblib
 
 # Windows
 Thumbs.db
+
+# Large generated graph (do not commit)
 data/raw/bangalore_graph.graphml
