@@ -9,16 +9,34 @@ def get_area_risk(area, hour):
     Later, this data can be passed to the ML model.
     """
 
-    # Validate input
+    # Validate area
     if not area or area.strip() == "":
         return {
             "success": False,
             "error": "Invalid area name."
         }
 
+    # Validate hour
+    if not isinstance(hour, int) or hour < 0 or hour > 23:
+        return {
+            "success": False,
+            "error": "Hour must be between 0 and 23."
+        }
+
     try:
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
+
+        # Check if database has any records
+        cursor.execute("SELECT COUNT(*) FROM crime_data")
+        total = cursor.fetchone()[0]
+
+        if total == 0:
+            conn.close()
+            return {
+                "success": False,
+                "error": "No crime data available."
+            }
 
         # Check if area exists
         cursor.execute(
