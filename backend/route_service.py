@@ -1,4 +1,17 @@
+from utils.logger import logger
 import sqlite3
+# ==================================================
+# DATABASE CONFIGURATION
+#
+# Current Database:
+#     SQLite (Development)
+#
+# Future Upgrade:
+#     Replace sqlite3 connection with
+#     Zoho Catalyst Data Store.
+#     Only the connection logic needs to change.
+# ==================================================
+
 
 DB_PATH = "data/saferoute.db"
 
@@ -17,6 +30,7 @@ def get_safe_route(source, destination):
         }
 
     if source == destination:
+    
         return {
             "success": False,
             "error": "Source and destination cannot be the same."
@@ -24,6 +38,7 @@ def get_safe_route(source, destination):
 
     try:
         conn = sqlite3.connect(DB_PATH)
+        logger.info("Connected to SQLite database")
         cursor = conn.cursor()
 
         # Check source exists
@@ -56,6 +71,7 @@ def get_safe_route(source, destination):
 
         # Placeholder for routing algorithm
         # route = risk_router(source, destination)
+        logger.info(f"Route requested from {source} to {destination}")
 
         return {
             "success": True,
@@ -68,6 +84,7 @@ def get_safe_route(source, destination):
         }
 
     except Exception as e:
+        logger.error(str(e))
         return {
             "success": False,
             "error": str(e)
@@ -80,4 +97,5 @@ if __name__ == "__main__":
         "Koramangala"
     )
 
-    print(result)
+    logger.info("Route service test completed successfully.")
+    logger.info(result)

@@ -1,5 +1,19 @@
+
 import sqlite3
 import os
+# ==================================================
+# DATABASE CONFIGURATION
+#
+# Current Database:
+#     SQLite (Development)
+#
+# Future Upgrade:
+#     Replace sqlite3 connection with
+#     Zoho Catalyst Data Store.
+#     Only the connection logic needs to change.
+# ==================================================
+
+DB_PATH = "data/saferoute.db"
 
 DB_PATH = "data/saferoute.db"
 

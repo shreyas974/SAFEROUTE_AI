@@ -1,4 +1,17 @@
+from utils.logger import logger
 import sqlite3
+# ==================================================
+# DATABASE CONFIGURATION
+#
+# Current Database:
+#     SQLite (Development)
+#
+# Future Upgrade:
+#     Replace sqlite3 connection with
+#     Zoho Catalyst Data Store.
+#     Only the connection logic needs to change.
+# ==================================================
+
 
 DB_PATH = "data/saferoute.db"
 
@@ -25,6 +38,7 @@ def get_area_risk(area, hour):
 
     try:
         conn = sqlite3.connect(DB_PATH)
+        logger.info("Connected to SQLite database")
         cursor = conn.cursor()
 
         # Check if database has any records
@@ -67,7 +81,7 @@ def get_area_risk(area, hour):
         """, (area,))
 
         crimes = cursor.fetchall()
-
+        logger.info(f"Fetched {len(crimes)} crime records for {area}")
         conn.close()
 
         # Placeholder for ML model
@@ -82,13 +96,16 @@ def get_area_risk(area, hour):
         }
 
     except Exception as e:
-        return {
-            "success": False,
-            "error": str(e)
-        }
+        logger.error(str(e))
+
+    return {
+        "success": False,
+        "error": str(e)
+    }
 
 
 # Test
 if __name__ == "__main__":
     result = get_area_risk("Indiranagar", 18)
-    print(result)
+    logger.info("Risk service test completed successfully.")
+    logger.info(result)

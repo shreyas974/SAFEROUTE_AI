@@ -1,5 +1,18 @@
 import sqlite3
 import pandas as pd
+# ==================================================
+# DATABASE CONFIGURATION
+#
+# Current Database:
+#     SQLite (Development)
+#
+# Future Upgrade:
+#     Replace sqlite3 connection with
+#     Zoho Catalyst Data Store.
+#     Only the connection logic needs to change.
+# ==================================================
+
+DB_PATH = "data/saferoute.db"
 
 DB_PATH = "data/saferoute.db"
 CSV_PATH = "data/raw/crime_data.csv"
