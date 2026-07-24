@@ -19,6 +19,8 @@ plotly>=5.18.0
 
 # Web Application
 streamlit>=1.30.0
+Flask>=3.1.0
+Flask-Cors>=6.0.0
 
 # Utilities
 requests>=2.31.0

@@ -1,6 +1,8 @@
 from utils.logger import logger
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import sqlite3
+
+from backend.route_engine import find_safe_route
 
 # ==================================================
 # DATABASE CONFIGURATION
@@ -44,7 +46,9 @@ def health():
 # -------------------------
 @app.route("/crimes")
 def get_crimes():
+
     logger.info("Fetching all crime records")
+
     conn = get_db_connection()
 
     rows = conn.execute(
@@ -61,6 +65,7 @@ def get_crimes():
 # -------------------------
 @app.route("/crime-hotspots")
 def crime_hotspots():
+
     logger.info("Fetching high severity crimes")
 
     conn = get_db_connection()
@@ -81,6 +86,7 @@ def crime_hotspots():
 # -------------------------
 @app.route("/crime-stats/area")
 def crime_stats_area():
+
     logger.info("Fetching crime statistics by area")
 
     conn = get_db_connection()
@@ -103,6 +109,7 @@ def crime_stats_area():
 # -------------------------
 @app.route("/crime-stats/type")
 def crime_stats_type():
+
     logger.info("Fetching crime statistics by type")
 
     conn = get_db_connection()
@@ -125,6 +132,7 @@ def crime_stats_type():
 # -------------------------
 @app.route("/crime-stats/severity")
 def crime_stats_severity():
+
     logger.info("Fetching crime statistics by severity")
 
     conn = get_db_connection()
@@ -139,6 +147,37 @@ def crime_stats_severity():
     conn.close()
 
     return jsonify([dict(row) for row in rows])
+
+
+# -------------------------
+# Safe Route API
+# -------------------------
+@app.route("/route", methods=["POST"])
+def route():
+
+    logger.info("Safe route requested")
+
+    data = request.get_json()
+
+    source = (
+        data["source_lat"],
+        data["source_lon"]
+    )
+
+    destination = (
+        data["destination_lat"],
+        data["destination_lon"]
+    )
+
+    hour = data.get("hour", 21)
+
+    result = find_safe_route(
+        source=source,
+        destination=destination,
+        hour=hour
+    )
+
+    return jsonify(result)
 
 
 # -------------------------
