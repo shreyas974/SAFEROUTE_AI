@@ -1,0 +1,21 @@
+AREA_COORDS = {
+    "MG Road": (12.9756, 77.6050),
+    "Indiranagar": (12.9784, 77.6408),
+    "Koramangala": (12.9352, 77.6245),
+    "Whitefield": (12.9698, 77.7499),
+    "Electronic City": (12.8399, 77.6770),
+    "HSR Layout": (12.9116, 77.6474),
+    "BTM Layout": (12.9166, 77.6101),
+    "Jayanagar": (12.9250, 77.5938),
+    "Hebbal": (13.0358, 77.5970),
+    "Yelahanka": (13.1007, 77.5963),
+    "Rajajinagar": (12.9915, 77.5545),
+    "Banashankari": (12.9184, 77.5735),
+    "Marathahalli": (12.9591, 77.6974),
+    "Bellandur": (12.9279, 77.6762),
+    "Malleshwaram": (13.0035, 77.5706),
+    "Basavanagudi": (12.9417, 77.5713),
+    "Majestic": (12.9779, 77.5713),
+    "KR Puram": (13.0080, 77.6956),
+    "Shivajinagar": (12.9857, 77.6046)
+}
