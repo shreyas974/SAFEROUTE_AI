@@ -23,3 +23,4 @@ models/*.joblib
 
 # Windows
 Thumbs.db
+data/raw/bangalore_graph.graphml

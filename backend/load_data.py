@@ -1,19 +1,49 @@
-import joblib
+import sqlite3
 import pandas as pd
 
-model = joblib.load("models/crime_prediction_model.pkl")
+# ==================================================
+# DATABASE CONFIGURATION
+#
+# Current Database:
+#     SQLite (Development)
+#
+# Future Upgrade:
+#     Replace sqlite3 connection with
+#     Zoho Catalyst Data Store.
+#     Only the connection logic needs to change.
+# ==================================================
 
-sample = pd.DataFrame([{
-    "Crime_Type": 6,
-    "Area": 1,
-    "Latitude": 12.97,
-    "Longitude": 77.60,
-    "Victim_Age": 35,
-    "Victim_Gender": 1,
-    "Status": 2,
-    "Day_of_Week": 4,
-    "Hour": 21
-}])
+DB_PATH = "data/saferoute.db"
+CSV_PATH = "data/raw/crime_data.csv"
 
-prediction = model.predict(sample)
-print(prediction)
+
+def load_csv_to_database():
+    # Read crime data from CSV
+    df = pd.read_csv(CSV_PATH)
+
+    # Connect to SQLite database
+    conn = sqlite3.connect(DB_PATH)
+
+    # Create/Replace the crime_data table
+    df.to_sql(
+        "crime_data",
+        conn,
+        if_exists="replace",
+        index=False
+    )
+
+    conn.commit()
+
+    # Verify number of inserted records
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM crime_data")
+
+    count = cursor.fetchone()[0]
+
+    print(f"Successfully inserted {count} records.")
+
+    conn.close()
+
+
+if __name__ == "__main__":
+    load_csv_to_database()
