@@ -1,5 +1,6 @@
 from utils.logger import logger
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 import sqlite3
 
 from backend.route_engine import find_safe_route
@@ -19,6 +20,7 @@ DB_PATH = "data/saferoute.db"
 
 # Create Flask app
 app = Flask(__name__)
+CORS(app)  # Enable CORS for React frontend
 
 
 # Database connection
