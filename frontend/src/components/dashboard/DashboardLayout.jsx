@@ -4,6 +4,7 @@ import AlertPanel from "./AlertPanel";
 import RouteSummary from "./RouteSummary";
 import AIRecommendation from "./AIRecommendation";
 import MapView from "../map/MapView";
+import DirectionsPanel from "../map/DirectionsPanel";
 import NearbyCrimes from "./NearbyCrimes";
 
 function DashboardLayout() {
@@ -18,8 +19,9 @@ function DashboardLayout() {
         </aside>
 
         {/* Map */}
-        <section className="lg:col-span-9">
+        <section className="lg:col-span-9 space-y-6">
           <MapView />
+          <DirectionsPanel />
         </section>
       </div>
 

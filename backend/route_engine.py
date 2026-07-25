@@ -1,5 +1,6 @@
 import osmnx as ox
 import networkx as nx
+import math
 
 from backend.location_utils import get_nearest_area
 from models.predict import predict_risk
@@ -50,6 +51,79 @@ def assign_risk(hour):
 # ---------------------------------------------------
 # Safe Route Function
 # ---------------------------------------------------
+
+def bearing(lat1, lon1, lat2, lon2):
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+    d_lon = lon2 - lon1
+    x = math.sin(d_lon) * math.cos(lat2)
+    y = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(d_lon)
+    return (math.degrees(math.atan2(x, y)) + 360) % 360
+
+
+def turn_direction(bearing_before, bearing_after):
+    diff = (bearing_after - bearing_before + 360) % 360
+    if diff > 180:
+        diff -= 360
+    if diff > 30:
+        return "Turn right"
+    if diff < -30:
+        return "Turn left"
+    if diff > 10:
+        return "Slight right"
+    if diff < -10:
+        return "Slight left"
+    return "Continue straight"
+
+
+def build_steps(route):
+    edge_names = []
+    edge_bearings = []
+    edge_lengths = []
+
+    for u, v in zip(route[:-1], route[1:]):
+        edge = G.get_edge_data(u, v)
+        edge_data = list(edge.values())[0]
+
+        name = edge_data.get("name", "unnamed road")
+        if isinstance(name, list):
+            name = name[0]
+
+        lat1, lon1 = G.nodes[u]["y"], G.nodes[u]["x"]
+        lat2, lon2 = G.nodes[v]["y"], G.nodes[v]["x"]
+
+        edge_names.append(name)
+        edge_bearings.append(bearing(lat1, lon1, lat2, lon2))
+        edge_lengths.append(edge_data.get("length", 0))
+
+    if not edge_names:
+        return []
+
+    steps = []
+    current_name = edge_names[0]
+    current_length = edge_lengths[0]
+    current_direction = "Continue straight"
+
+    for i in range(1, len(edge_names)):
+        if edge_names[i] == current_name:
+            current_length += edge_lengths[i]
+        else:
+            steps.append({
+                "instruction": current_direction,
+                "street": current_name,
+                "distance_m": round(current_length, 1)
+            })
+            current_direction = turn_direction(edge_bearings[i - 1], edge_bearings[i])
+            current_name = edge_names[i]
+            current_length = edge_lengths[i]
+
+    steps.append({
+        "instruction": current_direction,
+        "street": current_name,
+        "distance_m": round(current_length, 1)
+    })
+
+    return steps
+
 
 def find_safe_route(source, destination, hour=21):
 
@@ -103,11 +177,14 @@ def find_safe_route(source, destination, hour=21):
             "lon": G.nodes[node]["x"]
         })
 
+    steps = build_steps(route)
+
     return {
         "distance_km": round(total_distance / 1000, 2),
         "average_risk": round(average_risk, 3),
         "route_points": len(route),
-        "route": route_coordinates
+        "route": route_coordinates,
+        "steps": steps
     }
 
 

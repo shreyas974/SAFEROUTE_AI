@@ -29,3 +29,9 @@ Thumbs.db
 
 # Large generated graph (do not commit)
 data/raw/bangalore_graph.graphml
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Misc cache
+cache/

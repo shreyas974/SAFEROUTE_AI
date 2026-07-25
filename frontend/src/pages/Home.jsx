@@ -1,6 +1,5 @@
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
-
 import Hero from "../components/home/Hero";
 import Features from "../components/home/Features";
 import HowItWorks from "../components/home/HowItWorks";
@@ -11,17 +10,13 @@ function Home() {
   return (
     <>
       <Navbar />
-
-      <Hero />
-
-      <Features />
-
-      <HowItWorks />
-
-      <Statistics />
-
-      <CTA />
-
+      <div className="space-y-24 md:space-y-32 py-8">
+        <Hero />
+        <Features />
+        <HowItWorks />
+        <Statistics />
+        <CTA />
+      </div>
       <Footer />
     </>
   );

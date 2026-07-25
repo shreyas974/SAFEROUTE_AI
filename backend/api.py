@@ -1,8 +1,16 @@
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
 from utils.logger import logger
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import sqlite3
 
+from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
+import datetime
+from backend.database import get_connection, create_users_table
 from backend.route_engine import find_safe_route
 
 # ==================================================
@@ -21,6 +29,8 @@ DB_PATH = "data/saferoute.db"
 # Create Flask app
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React frontend
+
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-fallback-key-not-for-production")
 
 
 # Database connection
@@ -180,6 +190,94 @@ def route():
     )
 
     return jsonify(result)
+
+
+
+# -------------------------
+# Signup
+# -------------------------
+@app.route("/auth/signup", methods=["POST"])
+def signup():
+
+    data = request.get_json()
+    name = data.get("name")
+    email = data.get("email")
+    password = data.get("password")
+
+    if not name or not email or not password:
+        return jsonify({"error": "name, email and password are required"}), 400
+
+    password_hash = generate_password_hash(password)
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+            (name, email, password_hash)
+        )
+        conn.commit()
+        user_id = cursor.lastrowid
+    except sqlite3.IntegrityError:
+        conn.close()
+        return jsonify({"error": "Email already registered"}), 409
+
+    conn.close()
+
+    token = jwt.encode(
+        {
+            "user_id": user_id,
+            "email": email,
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        },
+        app.config["SECRET_KEY"],
+        algorithm="HS256"
+    )
+
+    return jsonify({
+        "token": token,
+        "user": {"id": user_id, "name": name, "email": email}
+    }), 201
+
+
+# -------------------------
+# Login
+# -------------------------
+@app.route("/auth/login", methods=["POST"])
+def login():
+
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"error": "email and password are required"}), 400
+
+    conn = get_connection()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+    user = cursor.fetchone()
+    conn.close()
+
+    if not user or not check_password_hash(user["password_hash"], password):
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    token = jwt.encode(
+        {
+            "user_id": user["id"],
+            "email": user["email"],
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        },
+        app.config["SECRET_KEY"],
+        algorithm="HS256"
+    )
+
+    return jsonify({
+        "token": token,
+        "user": {"id": user["id"], "name": user["name"], "email": user["email"]}
+    }), 200
 
 
 # -------------------------
