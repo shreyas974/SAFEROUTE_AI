@@ -23,7 +23,7 @@ crime_types = [
 ]
 
 # -----------------------------
-# Bengaluru Areas with Coordinates
+# Bengaluru Areas (19 Areas)
 # -----------------------------
 areas = {
     "MG Road": (12.9756, 77.6050),
@@ -40,8 +40,39 @@ areas = {
     "Banashankari": (12.9184, 77.5735),
     "Marathahalli": (12.9591, 77.6974),
     "Bellandur": (12.9279, 77.6762),
-    "Malleshwaram": (13.0035, 77.5706)
+    "Malleshwaram": (13.0035, 77.5706),
+    "Basavanagudi": (12.9417, 77.5713),
+    "Majestic": (12.9779, 77.5713),
+    "KR Puram": (13.0080, 77.6956),
+    "Shivajinagar": (12.9857, 77.6046)
 }
+
+# -----------------------------
+# Area Weights
+# -----------------------------
+area_names = list(areas.keys())
+
+area_weights = [
+    9,   # MG Road
+    8,   # Indiranagar
+    10,  # Koramangala
+    8,   # Whitefield
+    8,   # Electronic City
+    7,   # HSR Layout
+    7,   # BTM Layout
+    7,   # Jayanagar
+    7,   # Hebbal
+    6,   # Yelahanka
+    6,   # Rajajinagar
+    6,   # Banashankari
+    7,   # Marathahalli
+    8,   # Bellandur
+    6,   # Malleshwaram
+    8,   # Basavanagudi
+    10,  # Majestic
+    8,   # KR Puram
+    10   # Shivajinagar
+]
 
 # -----------------------------
 # Severity Mapping
@@ -93,7 +124,13 @@ print(f"Total Records to Generate: {num_records}")
 for i in range(1, num_records + 1):
 
     crime = random.choice(crime_types)
-    area = random.choice(list(areas.keys()))
+
+    # Weighted area selection
+    area = random.choices(
+        area_names,
+        weights=area_weights,
+        k=1
+    )[0]
 
     base_lat, base_lon = areas[area]
 
@@ -155,6 +192,9 @@ print(df.head())
 
 print("\nCrime Type Distribution:\n")
 print(df["Crime_Type"].value_counts())
+
+print("\nArea Distribution:\n")
+print(df["Area"].value_counts())
 
 print("\nSeverity Distribution:\n")
 print(df["Severity"].value_counts())

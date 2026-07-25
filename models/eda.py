@@ -1,5 +1,9 @@
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
+
+# Create output directory if it doesn't exist
+os.makedirs("images/eda", exist_ok=True)
 
 # Load dataset
 df = pd.read_csv("data/raw/crime_data.csv")
@@ -31,8 +35,8 @@ plt.xlabel("Crime Type")
 plt.ylabel("Count")
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.savefig("crime_type_distribution.png")
-plt.show()
+plt.savefig("images/eda/crime_type_distribution.png")
+plt.close()
 
 # -----------------------------
 # Severity Distribution
@@ -43,8 +47,8 @@ plt.title("Crime Severity Distribution")
 plt.xlabel("Severity")
 plt.ylabel("Count")
 plt.tight_layout()
-plt.savefig("severity_distribution.png")
-plt.show()
+plt.savefig("images/eda/severity_distribution.png")
+plt.close()
 
 # -----------------------------
 # Crimes by Area
@@ -56,8 +60,8 @@ plt.xlabel("Area")
 plt.ylabel("Number of Crimes")
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.savefig("area_distribution.png")
-plt.show()
+plt.savefig("images/eda/area_distribution.png")
+plt.close()
 
 # -----------------------------
 # Victim Gender Distribution
@@ -67,11 +71,11 @@ df["Victim_Gender"].value_counts().plot(kind="pie", autopct="%1.1f%%")
 plt.title("Victim Gender Distribution")
 plt.ylabel("")
 plt.tight_layout()
-plt.savefig("victim_gender_distribution.png")
-plt.show()
+plt.savefig("images/eda/victim_gender_distribution.png")
+plt.close()
 
 print("\nEDA Completed Successfully!")
-print("Charts saved:")
+print("Charts saved in: images/eda/")
 print("- crime_type_distribution.png")
 print("- severity_distribution.png")
 print("- area_distribution.png")

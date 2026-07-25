@@ -1,0 +1,44 @@
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid var(--glass-border);
+
+  border-radius: var(--radius);
+
+  box-shadow: var(--shadow-soft);
+
+  transition: all 0.3s ease;
+}
+
+.glass:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+}
+
+.glass-btn {
+  background: var(--primary);
+  color: white;
+
+  padding: 12px 24px;
+
+  border-radius: 14px;
+
+  font-weight: 600;
+
+  transition: all .3s ease;
+}
+
+.glass-btn:hover {
+  background: #1D4ED8;
+  transform: translateY(-2px);
+}
+
+.glass-btn.secondary {
+  background: var(--secondary);
+}
+
+.glass-btn.secondary:hover {
+  background: #EA580C;
+}
