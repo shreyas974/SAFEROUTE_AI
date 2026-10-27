@@ -23,26 +23,46 @@ function SeverityChart() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p>Loading severity stats...</p>;
-  if (error) return <p>Error loading severity stats: {error}</p>;
-  if (!data.length) return <p>No severity data available.</p>;
+  if (loading) return <div className="h-72 flex items-center justify-center text-xs text-slate-400">Loading severity distribution...</div>;
+  if (error) return <div className="h-72 flex items-center justify-center text-xs text-rose-400">Error loading severity stats: {error}</div>;
+  if (!data.length) return <div className="h-72 flex items-center justify-center text-xs text-slate-400">No severity data available.</div>;
 
   return (
-    <div style={{ width: "100%", height: 300 }}>
-      <h3>Crimes by Severity</h3>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="Severity" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="total" radius={[4, 4, 0, 0]}>
-            {data.map((entry, index) => (
-              <Cell key={index} fill={SEVERITY_COLORS[entry.Severity] || "#3b82f6"} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+    <div className="w-full">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="text-base font-bold text-white">Incident Severity Distribution</h3>
+          <p className="text-xs text-slate-400">DBSCAN Clustering Severity Weighting</p>
+        </div>
+        <div className="flex items-center gap-4 text-xs">
+          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-red-500" /> High</span>
+          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Medium</span>
+          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Low</span>
+        </div>
+      </div>
+      <div className="w-full h-72">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+            <XAxis dataKey="Severity" tick={{ fontSize: 12, fill: "#94a3b8" }} />
+            <YAxis tick={{ fontSize: 12, fill: "#94a3b8" }} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#0f172a",
+                borderColor: "#334155",
+                borderRadius: "12px",
+                color: "#fff",
+                fontSize: "12px",
+              }}
+            />
+            <Bar dataKey="total" radius={[8, 8, 0, 0]}>
+              {data.map((entry, index) => (
+                <Cell key={index} fill={SEVERITY_COLORS[entry.Severity] || "#3b82f6"} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

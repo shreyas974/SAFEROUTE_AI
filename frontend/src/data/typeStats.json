@@ -1,0 +1,42 @@
+[
+  {
+    "Crime_Type": "Robbery",
+    "total": 640
+  },
+  {
+    "Crime_Type": "Assault",
+    "total": 636
+  },
+  {
+    "Crime_Type": "Theft",
+    "total": 628
+  },
+  {
+    "Crime_Type": "Cyber Crime",
+    "total": 625
+  },
+  {
+    "Crime_Type": "Murder",
+    "total": 620
+  },
+  {
+    "Crime_Type": "Fraud",
+    "total": 620
+  },
+  {
+    "Crime_Type": "Vehicle Theft",
+    "total": 617
+  },
+  {
+    "Crime_Type": "Kidnapping",
+    "total": 614
+  },
+  {
+    "Crime_Type": "Domestic Violence",
+    "total": 614
+  },
+  {
+    "Crime_Type": "Drug Offense",
+    "total": 579
+  }
+]

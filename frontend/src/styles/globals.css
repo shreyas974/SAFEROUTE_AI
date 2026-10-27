@@ -1,4 +1,6 @@
-/* Typography */
+/* ==========================================
+   Enterprise Globals & Clean Typography
+========================================== */
 
 h1,
 h2,
@@ -6,8 +8,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-family:"Times New Roman", Times, serif;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   color: var(--text-primary);
+  font-weight: 700;
 }
 
 p {
@@ -15,41 +18,29 @@ p {
   line-height: 1.7;
 }
 
-/* Links */
-
 a {
   text-decoration: none;
   color: inherit;
 }
 
-/* Buttons */
-
 button {
   font-family: inherit;
   cursor: pointer;
-  transition: 0.3s ease;
 }
-
-/* Forms */
 
 input,
 textarea,
 select {
   font-family: inherit;
-  outline: none;
-  border: none;
 }
-
-/* Images */
 
 img {
   display: block;
   max-width: 100%;
 }
 
-/* Container */
-
 .container {
-  width: min(1200px, 90%);
-  margin: auto;
+  width: min(1280px, 92%);
+  margin-left: auto;
+  margin-right: auto;
 }

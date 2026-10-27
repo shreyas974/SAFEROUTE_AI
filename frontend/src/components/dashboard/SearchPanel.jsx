@@ -3,6 +3,8 @@ import { MapPin } from "lucide-react";
 import GlassCard from "../common/GlassCard";
 import GlassButton from "../common/GlassButton";
 import { useRoute } from "../../context/RouteContext";
+import { useAuth } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 import { getCurrentLocation } from "../../services/locationService";
 import areaCoords from "../../data/areaCoords";
 
@@ -11,6 +13,7 @@ const areaNames = Object.keys(areaCoords);
 function SearchPanel() {
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
+  const { user, saveRoute } = useAuth();
   const {
     fetchRoute,
     clearRoute,
@@ -89,10 +92,33 @@ function SearchPanel() {
         {error && <p className="text-sm text-red-600">Error: {error}</p>}
 
         {routeData && !routeData.error && (
-          <div className="glass rounded-xl p-4 text-sm space-y-1">
-            <p><strong>Distance:</strong> {routeData.distance_km} km</p>
-            <p><strong>Average Risk:</strong> {routeData.average_risk}</p>
-            <p><strong>Route Points:</strong> {routeData.route_points}</p>
+          <div className="glass rounded-xl p-4 text-sm space-y-2">
+            <div className="space-y-1">
+              <p><strong>Distance:</strong> {routeData.distance_km} km</p>
+              <p><strong>Average Risk:</strong> {routeData.average_risk}</p>
+              <p><strong>Route Points:</strong> {routeData.route_points}</p>
+            </div>
+            {user && (
+              <button
+                onClick={async () => {
+                  try {
+                    await saveRoute({
+                      source: source || "Custom Origin",
+                      destination: destination || "Custom Destination",
+                      distance_km: routeData.distance_km,
+                      average_risk: routeData.average_risk,
+                      duration: routeData.duration || "18 mins",
+                    });
+                    toast.success("Route saved to Firebase profile!");
+                  } catch (e) {
+                    toast.error("Failed to save route");
+                  }
+                }}
+                className="w-full py-2 px-3 rounded-lg bg-blue-600/30 hover:bg-blue-600/50 text-blue-200 border border-blue-400/30 text-xs font-semibold transition"
+              >
+                ★ Save to My Routes
+              </button>
+            )}
           </div>
         )}
       </div>

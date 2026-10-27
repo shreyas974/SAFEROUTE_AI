@@ -9,15 +9,15 @@ import GlassCard from "../components/common/GlassCard";
 import GlassButton from "../components/common/GlassButton";
 
 const techStack = [
-  { id: 1, icon: <Code2 size={26} />, tint: "bg-blue-100 text-blue-600", title: "Frontend", items: "React, Vite, Tailwind CSS, Recharts, Leaflet" },
-  { id: 2, icon: <Database size={26} />, tint: "bg-orange-100 text-orange-500", title: "Backend", items: "Flask, Python, SQLite" },
-  { id: 3, icon: <Sparkles size={26} />, tint: "bg-green-100 text-green-600", title: "AI & Analytics", items: "Crime pattern analysis, risk scoring, route optimization" },
+  { id: 1, icon: <Code2 size={26} />, tint: "bg-blue-100 text-blue-600", title: "Frontend & Maps", items: "React 19, Vite, Tailwind CSS, Leaflet Maps, Recharts" },
+  { id: 2, icon: <Database size={26} />, tint: "bg-orange-100 text-orange-500", title: "Cloud & Storage", items: "Google Firebase Auth, Firestore Storage, Vercel Edge Global CI/CD" },
+  { id: 3, icon: <Sparkles size={26} />, tint: "bg-green-100 text-green-600", title: "AI & Analytics", items: "DBSCAN Crime Clustering, Haversine Path Engine, Risk Scoring" },
 ];
 
 const team = [
-  { id: 1, name: "Shreyas", role: "AI/ML, Full Stack & Route Engineering", github: "#", linkedin: "#", email: "#" },
-  { id: 2, name: "Shanta", role: "Backend Developer", github: "#", linkedin: "#", email: "#" },
-  { id: 3, name: "Syeda", role: "Frontend Developer", github: "#", linkedin: "#", email: "#" },
+  { id: 1, name: "Shreyas", role: "AI/ML, Full Stack & Route Engineering", github: "https://github.com/shreyas974", linkedin: "#", email: "lohi.gs2006@gmail.com" },
+  { id: 2, name: "Shanta", role: "Backend Developer & Data Engineering", github: "#", linkedin: "#", email: "#" },
+  { id: 3, name: "Syeda", role: "Frontend Developer & UI/UX Design", github: "#", linkedin: "#", email: "#" },
 ];
 
 function About() {
@@ -111,7 +111,7 @@ function About() {
             The people behind SafeRoute AI.
           </p>
         </div>
-        <div className="grid gap-8 sm:grid-cols-2 max-w-3xl mx-auto mb-20">
+        <div className="grid gap-6 sm:grid-cols-3 max-w-4xl mx-auto mb-20">
           {team.map((member) => (
             <GlassCard key={member.id} className="p-8 text-center">
               <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-blue-600 text-2xl font-bold">

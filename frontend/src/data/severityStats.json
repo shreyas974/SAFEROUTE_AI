@@ -1,0 +1,14 @@
+[
+  {
+    "Severity": "High",
+    "total": 1874
+  },
+  {
+    "Severity": "Medium",
+    "total": 3074
+  },
+  {
+    "Severity": "Low",
+    "total": 1245
+  }
+]

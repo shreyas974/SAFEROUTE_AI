@@ -1,0 +1,107 @@
+[
+  {
+    "id": 0,
+    "Latitude": 12.970000565031983,
+    "Longitude": 77.75008308102345,
+    "Crime_Count": 469,
+    "Risk": "High"
+  },
+  {
+    "id": 1,
+    "Latitude": 12.935294825,
+    "Longitude": 77.62456928863637,
+    "Crime_Count": 440,
+    "Risk": "High"
+  },
+  {
+    "id": 2,
+    "Latitude": 12.978147147186148,
+    "Longitude": 77.64084132467532,
+    "Crime_Count": 462,
+    "Risk": "High"
+  },
+  {
+    "id": 3,
+    "Latitude": 12.991630309468823,
+    "Longitude": 77.55472370207852,
+    "Crime_Count": 433,
+    "Risk": "High"
+  },
+  {
+    "id": 4,
+    "Latitude": 12.924959250574712,
+    "Longitude": 77.59384365977012,
+    "Crime_Count": 435,
+    "Risk": "High"
+  },
+  {
+    "id": 5,
+    "Latitude": 12.83981759305211,
+    "Longitude": 77.67690084863524,
+    "Crime_Count": 403,
+    "Risk": "High"
+  },
+  {
+    "id": 6,
+    "Latitude": 12.927849470715834,
+    "Longitude": 77.67633848806942,
+    "Crime_Count": 461,
+    "Risk": "High"
+  },
+  {
+    "id": 7,
+    "Latitude": 12.975543836956522,
+    "Longitude": 77.60488733913044,
+    "Crime_Count": 460,
+    "Risk": "High"
+  },
+  {
+    "id": 8,
+    "Latitude": 13.035937365800867,
+    "Longitude": 77.5968149935065,
+    "Crime_Count": 462,
+    "Risk": "High"
+  },
+  {
+    "id": 9,
+    "Latitude": 13.100654500000001,
+    "Longitude": 77.59633108515284,
+    "Crime_Count": 458,
+    "Risk": "High"
+  },
+  {
+    "id": 10,
+    "Latitude": 12.959228416107381,
+    "Longitude": 77.69751909843401,
+    "Crime_Count": 447,
+    "Risk": "High"
+  },
+  {
+    "id": 11,
+    "Latitude": 12.911661227876108,
+    "Longitude": 77.64736913495574,
+    "Crime_Count": 452,
+    "Risk": "High"
+  },
+  {
+    "id": 12,
+    "Latitude": 12.916537333333334,
+    "Longitude": 77.60994792671394,
+    "Crime_Count": 423,
+    "Risk": "High"
+  },
+  {
+    "id": 13,
+    "Latitude": 13.003498467889909,
+    "Longitude": 77.57064927522936,
+    "Crime_Count": 436,
+    "Risk": "High"
+  },
+  {
+    "id": 14,
+    "Latitude": 12.918422183006538,
+    "Longitude": 77.57346549019607,
+    "Crime_Count": 459,
+    "Risk": "High"
+  }
+]

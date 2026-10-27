@@ -1,0 +1,78 @@
+[
+  {
+    "Area": "Majestic",
+    "total_crimes": 440
+  },
+  {
+    "Area": "Koramangala",
+    "total_crimes": 406
+  },
+  {
+    "Area": "Shivajinagar",
+    "total_crimes": 399
+  },
+  {
+    "Area": "KR Puram",
+    "total_crimes": 366
+  },
+  {
+    "Area": "Electronic City",
+    "total_crimes": 365
+  },
+  {
+    "Area": "Bellandur",
+    "total_crimes": 363
+  },
+  {
+    "Area": "MG Road",
+    "total_crimes": 354
+  },
+  {
+    "Area": "Basavanagudi",
+    "total_crimes": 353
+  },
+  {
+    "Area": "Indiranagar",
+    "total_crimes": 339
+  },
+  {
+    "Area": "HSR Layout",
+    "total_crimes": 322
+  },
+  {
+    "Area": "Whitefield",
+    "total_crimes": 322
+  },
+  {
+    "Area": "BTM Layout",
+    "total_crimes": 301
+  },
+  {
+    "Area": "Marathahalli",
+    "total_crimes": 299
+  },
+  {
+    "Area": "Hebbal",
+    "total_crimes": 288
+  },
+  {
+    "Area": "Jayanagar",
+    "total_crimes": 274
+  },
+  {
+    "Area": "Yelahanka",
+    "total_crimes": 273
+  },
+  {
+    "Area": "Banashankari",
+    "total_crimes": 249
+  },
+  {
+    "Area": "Rajajinagar",
+    "total_crimes": 247
+  },
+  {
+    "Area": "Malleshwaram",
+    "total_crimes": 233
+  }
+]

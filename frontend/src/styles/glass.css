@@ -1,44 +1,55 @@
+/* ==========================================
+   Company-Grade Glassmorphism
+========================================== */
+
 .glass {
   background: var(--glass);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-
   border-radius: var(--radius);
-
   box-shadow: var(--shadow-soft);
-
-  transition: all 0.3s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.glass:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-medium);
+.glass-interactive:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
 
 .glass-btn {
-  background: var(--primary);
-  color: white;
-
-  padding: 12px 24px;
-
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  padding: 10px 22px;
   border-radius: 14px;
-
   font-weight: 600;
-
-  transition: all .3s ease;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .glass-btn:hover {
-  background: #1D4ED8;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 6px 22px rgba(37, 99, 235, 0.45);
+  transform: translateY(-1px);
+}
+
+.glass-btn:active {
+  transform: scale(0.98);
 }
 
 .glass-btn.secondary {
-  background: var(--secondary);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+  box-shadow: none;
 }
 
 .glass-btn.secondary:hover {
-  background: #EA580C;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
 }

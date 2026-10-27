@@ -12,27 +12,46 @@ function AreaChart() {
 
   useEffect(() => {
     getAreaStats()
-      .then(setData)
+      .then((res) => setData(res.slice(0, 10)))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p>Loading area stats...</p>;
-  if (error) return <p>Error loading area stats: {error}</p>;
-  if (!data.length) return <p>No area data available.</p>;
+  if (loading) return <div className="h-72 flex items-center justify-center text-xs text-slate-400">Loading area statistics...</div>;
+  if (error) return <div className="h-72 flex items-center justify-center text-xs text-rose-400">Error loading area stats: {error}</div>;
+  if (!data.length) return <div className="h-72 flex items-center justify-center text-xs text-slate-400">No area data available.</div>;
 
   return (
-    <div style={{ width: "100%", height: 300 }}>
-      <h3>Crimes by Area</h3>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="Area" tick={{ fontSize: 12 }} interval={0} angle={-30} textAnchor="end" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="total_crimes" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
+    <div className="w-full">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-base font-bold text-white">Incidents by Bengaluru Area (Top 10)</h3>
+        <span className="text-[11px] text-slate-400">Police FIR Data</span>
+      </div>
+      <div className="w-full h-72">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 40 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+            <XAxis
+              dataKey="Area"
+              tick={{ fontSize: 11, fill: "#94a3b8" }}
+              interval={0}
+              angle={-35}
+              textAnchor="end"
+            />
+            <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#0f172a",
+                borderColor: "#334155",
+                borderRadius: "12px",
+                color: "#fff",
+                fontSize: "12px",
+              }}
+            />
+            <Bar dataKey="total_crimes" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

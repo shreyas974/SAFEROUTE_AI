@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 
 import App from "./App";
 import { RouteProvider } from "./context/RouteContext";
+import { AuthProvider } from "./context/AuthContext";
 
 import "./index.css";
 import "./styles/globals.css";
@@ -17,10 +18,12 @@ import "react-leaflet-cluster/dist/assets/MarkerCluster.Default.css";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <RouteProvider>
-        <Toaster position="top-right" />
-        <App />
-      </RouteProvider>
+      <AuthProvider>
+        <RouteProvider>
+          <Toaster position="top-right" />
+          <App />
+        </RouteProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

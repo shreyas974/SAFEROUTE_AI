@@ -1,10 +1,11 @@
 import GlassCard from "../common/GlassCard";
 import { useRoute } from "../../context/RouteContext";
+import { Navigation, Clock, ShieldCheck, MapPin } from "lucide-react";
 
-function riskLabel(risk) {
-  if (risk >= 0.6) return { text: "High", color: "text-red-600" };
-  if (risk >= 0.3) return { text: "Medium", color: "text-orange-500" };
-  return { text: "Low", color: "text-green-600" };
+function riskBadge(risk) {
+  if (risk >= 0.4) return { text: "High Risk", color: "text-rose-400 bg-rose-500/15 border-rose-500/25" };
+  if (risk >= 0.25) return { text: "Moderate Risk", color: "text-amber-400 bg-amber-500/15 border-amber-500/25" };
+  return { text: "Safe Corridor", color: "text-emerald-400 bg-emerald-500/15 border-emerald-500/25" };
 }
 
 function RouteSummary() {
@@ -12,37 +13,54 @@ function RouteSummary() {
 
   if (!routeData || routeData.error) {
     return (
-      <GlassCard>
-        <h2 className="text-2xl font-bold mb-4">Recommended Route</h2>
-        <p className="text-gray-500">
-          Select a source and destination to see route details.
+      <GlassCard className="p-6 border border-white/10 shadow-xl rounded-2xl">
+        <h2 className="text-xl font-bold text-white mb-2">Recommended Route</h2>
+        <p className="text-sm text-slate-400">
+          Select source and destination areas above to generate route analytics.
         </p>
       </GlassCard>
     );
   }
 
-  const risk = riskLabel(routeData.average_risk);
+  const risk = riskBadge(routeData.average_risk);
 
   return (
-    <GlassCard>
-      <h2 className="text-2xl font-bold mb-4">Recommended Route</h2>
-      <div className="grid md:grid-cols-3 gap-4">
-        <div>
-          <p className="text-gray-500">Distance</p>
-          <h3 className="text-xl font-semibold">
-            {routeData.distance_km} km
+    <GlassCard className="p-6 border border-white/10 shadow-xl rounded-2xl">
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-xl font-bold text-white">Recommended Route</h2>
+        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${risk.color}`}>
+          {risk.text}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 text-center">
+          <div className="flex items-center justify-center text-cyan-400 mb-1">
+            <Navigation size={18} />
+          </div>
+          <p className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Distance</p>
+          <h3 className="text-lg font-extrabold text-white mt-0.5">
+            {routeData.distance_km} <span className="text-xs font-normal text-slate-400">km</span>
           </h3>
         </div>
-        <div>
-          <p className="text-gray-500">Route Points</p>
-          <h3 className="text-xl font-semibold">
-            {routeData.route_points}
+
+        <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 text-center">
+          <div className="flex items-center justify-center text-blue-400 mb-1">
+            <Clock size={18} />
+          </div>
+          <p className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Duration</p>
+          <h3 className="text-lg font-extrabold text-white mt-0.5">
+            {routeData.duration || "16 mins"}
           </h3>
         </div>
-        <div>
-          <p className="text-gray-500">Risk Score</p>
-          <h3 className={`text-xl font-semibold ${risk.color}`}>
-            {risk.text} ({routeData.average_risk})
+
+        <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 text-center">
+          <div className="flex items-center justify-center text-emerald-400 mb-1">
+            <ShieldCheck size={18} />
+          </div>
+          <p className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Safety Score</p>
+          <h3 className="text-lg font-extrabold text-emerald-400 mt-0.5">
+            {routeData.safety_score || Math.max(0, Math.round((1 - routeData.average_risk) * 100))}%
           </h3>
         </div>
       </div>

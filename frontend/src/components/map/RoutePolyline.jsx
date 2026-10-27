@@ -14,7 +14,10 @@ function RoutePolyline() {
     return null;
   }
 
-  const positions = routeData.route.map((point) => [point.lat, point.lon]);
+  const positions = routeData.route.map((point) => {
+    if (Array.isArray(point)) return point;
+    return [point.lat ?? point.latitude, point.lon ?? point.longitude];
+  });
 
   return (
     <Polyline
