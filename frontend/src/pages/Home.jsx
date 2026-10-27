@@ -8,17 +8,17 @@ import CTA from "../components/home/CTA";
 
 function Home() {
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-[#0b132b] text-slate-100 selection:bg-blue-600 selection:text-white">
       <Navbar />
-      <div className="space-y-24 md:space-y-32 py-8">
+      <main className="flex-1 space-y-20 md:space-y-28 py-6">
         <Hero />
         <Features />
         <HowItWorks />
         <Statistics />
         <CTA />
-      </div>
+      </main>
       <Footer />
-    </>
+    </div>
   );
 }
 

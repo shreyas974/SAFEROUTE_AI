@@ -4,13 +4,13 @@ import DashboardLayout from "../components/dashboard/DashboardLayout";
 
 function Dashboard() {
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-[#0b132b] text-slate-100">
       <Navbar />
-
-      <DashboardLayout />
-
+      <div className="flex-1">
+        <DashboardLayout />
+      </div>
       <Footer />
-    </>
+    </div>
   );
 }
 
