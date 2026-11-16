@@ -30,4 +30,8 @@ openpyxl>=3.1.0
 # Geospatial
 geopandas>=0.14.0
 shapely>=2.0.0
-pyproj>=3.6.0PyJWT>=2.8.0
+pyproj>=3.6.0
+PyJWT>=2.8.0
+
+# Backend API config (backend/api.py)
+python-dotenv>=1.0.0
