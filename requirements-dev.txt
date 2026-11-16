@@ -1,0 +1,5 @@
+-r requirements.txt
+pytest>=8.0
+faker>=24.0          # backend/generate_synthetic_data.py
+matplotlib>=3.7.0    # models/eda.py
+geopy>=2.4.0         # algorithms/safe_route.py (legacy prototype)
