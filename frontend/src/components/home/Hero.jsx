@@ -1,5 +1,4 @@
 import GlassCard from "../common/GlassCard";
-import GlassButton from "../common/GlassButton";
 import { useNavigate } from "react-router-dom";
 import { Navigation, ArrowRight, ShieldCheck, Sparkles, MapPin } from "lucide-react";
 
@@ -7,15 +6,15 @@ function Hero() {
   const navigate = useNavigate();
 
   return (
-    <section className="container mx-auto px-4 flex min-h-[80vh] items-center justify-center relative">
+    <section className="container mx-auto px-4 flex min-h-[80vh] items-center justify-center relative overflow-hidden">
       {/* Background ambient lighting */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-blue-600/20 via-cyan-500/15 to-indigo-600/20 blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(600px,100%)] h-[350px]  bg-gradient-to-tr from-blue-600/20 via-cyan-500/15 to-indigo-600/20 blur-3xl rounded-full pointer-events-none" />
 
       <GlassCard className="max-w-4xl p-8 sm:p-14 text-center fade-up border border-white/10 shadow-2xl backdrop-blur-2xl bg-slate-900/60 rounded-3xl relative z-10">
         {/* Company Enterprise Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-semibold mb-6 shadow-sm">
           <Sparkles size={14} className="text-cyan-400 animate-pulse" />
-          <span>Enterprise AI Urban Safety & Navigation Engine</span>
+          <span>Route planning that shows its trade-offs</span>
         </div>
 
         <h1 className="mb-6 text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight text-white">
@@ -54,15 +53,15 @@ function Hero() {
         <div className="pt-6 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-slate-300">
           <div className="flex items-center justify-center gap-2">
             <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
-            <span>98.4% Safety Corridor Rating</span>
+            <span>Real OpenStreetMap road network</span>
           </div>
           <div className="flex items-center justify-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping inline-block" />
-            <span>19 Bengaluru Metro Zones</span>
+            <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block" aria-hidden="true" />
+            <span>Fastest vs. lower-risk, side by side</span>
           </div>
           <div className="flex items-center justify-center gap-2">
             <ShieldCheck size={16} className="text-blue-400 shrink-0" />
-            <span>Firebase Cloud Storage Sync</span>
+            <span>No account needed</span>
           </div>
         </div>
       </GlassCard>

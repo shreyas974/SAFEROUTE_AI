@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { 
-  Menu, X, User, LogOut, Bookmark, ShieldAlert,
-  ChevronDown, ExternalLink, Sparkles
+  Menu, X, LogOut, Bookmark, ShieldAlert,
+  ChevronDown, Sparkles
 } from "lucide-react";
 import SafeRouteLogo from "./SafeRouteLogo";
 import { useAuth } from "../../context/AuthContext";

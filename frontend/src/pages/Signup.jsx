@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { 
   User, Mail, Lock, Phone, Eye, EyeOff, 
-  ArrowRight, ShieldCheck, AlertCircle 
+  ArrowRight, AlertCircle 
 } from "lucide-react";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 
 function Signup() {
   const navigate = useNavigate();
-  const { signup, loginWithGoogle } = useAuth();
+  const { signup, loginWithGoogle, accountsAvailable } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -48,7 +48,7 @@ function Signup() {
     setLoading(true);
     try {
       await loginWithGoogle();
-      toast.success("Welcome to SafeRoute AI!");
+      toast.success("Signed in.");
       navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Google signup was cancelled.");
@@ -77,9 +77,16 @@ function Signup() {
                 Create Account
               </h1>
               <p className="text-xs sm:text-sm text-slate-400 mt-1.5">
-                Join SafeRoute AI and protect your daily urban travel.
+                Optional: keep saved routes across devices.
               </p>
             </div>
+
+            {!accountsAvailable && (
+              <div role="note" className="mb-6 rounded-xl bg-amber-500/10 border border-amber-400/40 p-4 text-sm text-amber-100">
+                <strong className="block text-amber-200 mb-1">Accounts are not set up on this deployment.</strong>
+                You don't need one: plan routes on the <Link to="/dashboard" className="underline font-semibold">map</Link>, and saved routes stay on this device.
+              </div>
+            )}
 
             {error && (
               <div className="mb-6 flex items-start gap-2.5 rounded-xl bg-rose-500/15 border border-rose-500/30 p-3.5 text-xs text-rose-300 animate-in fade-in">
@@ -92,7 +99,7 @@ function Signup() {
             <button
               type="button"
               onClick={handleGoogleSignup}
-              disabled={loading}
+              disabled={loading || !accountsAvailable}
               className="w-full mb-5 flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold tracking-wide transition shadow-sm active:scale-[0.99]"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -118,7 +125,7 @@ function Signup() {
 
             <div className="relative flex items-center justify-center mb-5">
               <div className="border-t border-white/10 w-full" />
-              <span className="bg-slate-900 px-3 text-[11px] font-medium text-slate-500 uppercase tracking-widest shrink-0">
+              <span className="bg-slate-900 px-3 text-[11px] font-medium text-slate-400 uppercase tracking-widest shrink-0">
                 Or fill details
               </span>
               <div className="border-t border-white/10 w-full" />
@@ -177,7 +184,9 @@ function Signup() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-pressed={showPassword}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 min-w-[32px] min-h-[32px] grid place-items-center rounded-lg text-slate-300 hover:text-white"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -186,7 +195,7 @@ function Signup() {
 
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Emergency Contact Number <span className="text-slate-500">(Optional SOS)</span>
+                  Emergency Contact Number <span className="text-slate-400">(Optional SOS)</span>
                 </label>
                 <div className="relative">
                   <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -209,14 +218,14 @@ function Signup() {
                     className="mt-0.5 rounded bg-white/10 border-white/20 text-blue-600 focus:ring-blue-500 h-3.5 w-3.5"
                   />
                   <span className="text-[11px] text-slate-400 leading-snug">
-                    I agree to SafeRoute AI's Terms of Service and acknowledge emergency location analytics.
+                    I understand my name, email and (optional) emergency contact are stored in this deployment's Firebase project, and that route risk scores are based on demo data.
                   </span>
                 </label>
               </div>
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !accountsAvailable}
                 className="w-full mt-2 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-semibold tracking-wide transition shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 active:scale-[0.99] disabled:opacity-60"
               >
                 {loading ? (

@@ -1,249 +1,122 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import {
-  auth,
-  googleProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  updateProfile,
-  sendPasswordResetEmail,
-  saveUserProfile,
-  getUserProfile,
-  saveUserRoute as dbSaveUserRoute,
-  getUserRoutes as dbGetUserRoutes,
-} from "../firebase/firebase";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { getDeviceRoutes, saveDeviceRoute } from "../storage/deviceRoutes";
 
 const AuthContext = createContext();
 
-const DEMO_USER = {
-  uid: "demo_enterprise_user_01",
-  displayName: "Alex Rivera",
-  email: "alex.rivera@saferoute.ai",
-  role: "Enterprise Safety Lead",
-  photoURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-  emergencyContact: "+91 98765 43210 (Security Operations)",
-  organization: "SafeRoute Enterprise Global",
-};
+// Accounts exist only when this deployment configures its own Firebase project. Without it there is
+// no sign-in at all (no local "accounts" that accept any password) and saved routes stay on this device.
+// The Firebase SDK (~650 kB) is only downloaded when it is configured.
+const accountsAvailable = Boolean(import.meta.env.VITE_FIREBASE_API_KEY && import.meta.env.VITE_FIREBASE_PROJECT_ID);
+const NO_ACCOUNTS = "Accounts are not set up on this deployment. You can plan and save routes without one.";
+let firebase = null;
+const fb = () => (firebase ??= import("../firebase/firebase"));
+
+const toUser = (fbUser, profile) => ({
+  uid: fbUser.uid,
+  email: fbUser.email,
+  displayName: fbUser.displayName || profile?.displayName || fbUser.email?.split("@")[0] || "You",
+  photoURL: fbUser.photoURL || profile?.photoURL || null,
+  emergencyContact: profile?.emergencyContact || "",
+});
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
+  const [user, setUser] = useState(null);
+  const [savedRoutes, setSavedRoutes] = useState(() => (accountsAvailable ? [] : getDeviceRoutes()));
+  const [loading, setLoading] = useState(accountsAvailable);
+
+  const loadRoutes = useCallback(async (uid) => {
     try {
-      const cached = localStorage.getItem("saferoute_current_user");
-      return cached ? JSON.parse(cached) : null;
+      setSavedRoutes(await (await fb()).getUserRoutes(uid));
     } catch (e) {
-      return null;
+      console.warn("Could not load saved routes:", e);
     }
-  });
-  const [savedRoutes, setSavedRoutes] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Sync auth state
-  useEffect(() => {
-    let unsubscribe = () => {};
-
-    if (auth) {
-      try {
-        unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
-          if (fbUser) {
-            const profile = await getUserProfile(fbUser.uid);
-            const merged = {
-              uid: fbUser.uid,
-              email: fbUser.email,
-              displayName: fbUser.displayName || (profile && profile.displayName) || fbUser.email.split("@")[0],
-              photoURL: fbUser.photoURL || (profile && profile.photoURL) || null,
-              emergencyContact: (profile && profile.emergencyContact) || "",
-              organization: (profile && profile.organization) || "Enterprise Member",
-            };
-            setUser(merged);
-            localStorage.setItem("saferoute_current_user", JSON.stringify(merged));
-            loadUserRoutes(merged.uid);
-          } else {
-            // Keep local demo user if active, else clear
-            const cached = localStorage.getItem("saferoute_current_user");
-            if (cached) {
-              const parsed = JSON.parse(cached);
-              if (parsed.uid.startsWith("demo_")) {
-                setUser(parsed);
-                loadUserRoutes(parsed.uid);
-                setLoading(false);
-                return;
-              }
-            }
-            setUser(null);
-            localStorage.removeItem("saferoute_current_user");
-            setSavedRoutes([]);
-          }
-          setLoading(false);
-        });
-      } catch (err) {
-        setLoading(false);
-      }
-    } else {
-      setLoading(false);
-    }
-
-    return () => unsubscribe();
   }, []);
 
-  const loadUserRoutes = async (uid) => {
-    try {
-      const routes = await dbGetUserRoutes(uid);
-      setSavedRoutes(routes);
-    } catch (e) {
-      console.warn("Failed to load user routes:", e);
-    }
+  useEffect(() => {
+    if (!accountsAvailable) return undefined;
+    let unsubscribe = () => {};
+    let live = true;
+    fb().then((f) => {
+      if (!live || !f.auth) return setLoading(false);
+      unsubscribe = f.onAuthStateChanged(f.auth, async (fbUser) => {
+        if (fbUser) {
+          const merged = toUser(fbUser, await f.getUserProfile(fbUser.uid));
+          setUser(merged);
+          loadRoutes(merged.uid);
+        } else {
+          setUser(null);
+          setSavedRoutes([]);
+        }
+        setLoading(false);
+      });
+    });
+    return () => {
+      live = false;
+      unsubscribe();
+    };
+  }, [loadRoutes]);
+
+  const firebaseOrThrow = async () => {
+    if (!accountsAvailable) throw new Error(NO_ACCOUNTS);
+    const f = await fb();
+    if (!f.auth) throw new Error("Sign-in is unavailable: Firebase could not start.");
+    return f;
   };
 
   const login = async (email, password) => {
-    if (auth) {
-      try {
-        const cred = await signInWithEmailAndPassword(auth, email, password);
-        const profile = await getUserProfile(cred.user.uid);
-        const activeUser = {
-          uid: cred.user.uid,
-          email: cred.user.email,
-          displayName: cred.user.displayName || (profile && profile.displayName) || email.split("@")[0],
-          photoURL: cred.user.photoURL,
-          emergencyContact: profile?.emergencyContact || "",
-        };
-        setUser(activeUser);
-        localStorage.setItem("saferoute_current_user", JSON.stringify(activeUser));
-        await loadUserRoutes(activeUser.uid);
-        return activeUser;
-      } catch (err) {
-        // Fallback demo/local validation if Firebase project is unset
-        if (err.code === "auth/invalid-api-key" || err.code === "auth/network-request-failed") {
-          return loginLocally(email, password);
-        }
-        throw err;
-      }
-    } else {
-      return loginLocally(email, password);
-    }
-  };
-
-  const loginLocally = async (email, password) => {
-    const localUser = {
-      uid: `usr_${Date.now()}`,
-      email,
-      displayName: email.split("@")[0].replace(/[._]/g, " "),
-      photoURL: null,
-      emergencyContact: "+91 98450 11223",
-      organization: "SafeRoute AI Member",
-    };
-    setUser(localUser);
-    localStorage.setItem("saferoute_current_user", JSON.stringify(localUser));
-    await saveUserProfile(localUser.uid, localUser);
-    await loadUserRoutes(localUser.uid);
-    return localUser;
+    const f = await firebaseOrThrow();
+    const cred = await f.signInWithEmailAndPassword(f.auth, email, password);
+    return toUser(cred.user, await f.getUserProfile(cred.user.uid));
   };
 
   const signup = async (name, email, password, emergencyContact = "") => {
-    if (auth) {
-      try {
-        const cred = await createUserWithEmailAndPassword(auth, email, password);
-        await updateProfile(cred.user, { displayName: name });
-        const newUserData = {
-          uid: cred.user.uid,
-          email: cred.user.email,
-          displayName: name,
-          emergencyContact,
-          createdAt: new Date().toISOString(),
-        };
-        await saveUserProfile(cred.user.uid, newUserData);
-        setUser(newUserData);
-        localStorage.setItem("saferoute_current_user", JSON.stringify(newUserData));
-        return newUserData;
-      } catch (err) {
-        if (err.code === "auth/invalid-api-key" || err.code === "auth/network-request-failed") {
-          return signupLocally(name, email, emergencyContact);
-        }
-        throw err;
-      }
-    } else {
-      return signupLocally(name, email, emergencyContact);
-    }
-  };
-
-  const signupLocally = async (name, email, emergencyContact) => {
-    const newUser = {
-      uid: `usr_${Date.now()}`,
-      displayName: name,
-      email,
-      emergencyContact,
-      organization: "Enterprise Member",
-    };
-    setUser(newUser);
-    localStorage.setItem("saferoute_current_user", JSON.stringify(newUser));
-    await saveUserProfile(newUser.uid, newUser);
-    return newUser;
+    const f = await firebaseOrThrow();
+    const cred = await f.createUserWithEmailAndPassword(f.auth, email, password);
+    await f.updateProfile(cred.user, { displayName: name });
+    const profile = { displayName: name, email, emergencyContact, createdAt: new Date().toISOString() };
+    await f.saveUserProfile(cred.user.uid, profile);
+    return toUser(cred.user, profile);
   };
 
   const loginWithGoogle = async () => {
-    if (auth && googleProvider) {
-      try {
-        const res = await signInWithPopup(auth, googleProvider);
-        const fbUser = res.user;
-        const profile = await getUserProfile(fbUser.uid);
-        const merged = {
-          uid: fbUser.uid,
-          email: fbUser.email,
-          displayName: fbUser.displayName,
-          photoURL: fbUser.photoURL,
-          emergencyContact: profile?.emergencyContact || "",
-        };
-        setUser(merged);
-        localStorage.setItem("saferoute_current_user", JSON.stringify(merged));
-        await saveUserProfile(fbUser.uid, merged);
-        await loadUserRoutes(fbUser.uid);
-        return merged;
-      } catch (err) {
-        if (err.code === "auth/popup-closed-by-user") return;
-        return loginAsDemo();
-      }
-    } else {
-      return loginAsDemo();
+    const f = await firebaseOrThrow();
+    try {
+      const res = await f.signInWithPopup(f.auth, f.googleProvider);
+      const merged = toUser(res.user, await f.getUserProfile(res.user.uid));
+      await f.saveUserProfile(res.user.uid, { displayName: merged.displayName, email: merged.email });
+      return merged;
+    } catch (err) {
+      if (err.code === "auth/popup-closed-by-user") return null;
+      throw err;
     }
   };
 
-  const loginAsDemo = async () => {
-    setUser(DEMO_USER);
-    localStorage.setItem("saferoute_current_user", JSON.stringify(DEMO_USER));
-    await saveUserProfile(DEMO_USER.uid, DEMO_USER);
-    await loadUserRoutes(DEMO_USER.uid);
-    return DEMO_USER;
-  };
-
   const logout = async () => {
-    try {
-      if (auth) await signOut(auth);
-    } catch (e) {}
-    setUser(null);
-    setSavedRoutes([]);
-    localStorage.removeItem("saferoute_current_user");
+    if (accountsAvailable) {
+      const f = await fb();
+      if (f.auth) await f.signOut(f.auth);
+    }
   };
 
   const updateProfileData = async (updates) => {
     if (!user) return;
     const updated = { ...user, ...updates };
     setUser(updated);
-    localStorage.setItem("saferoute_current_user", JSON.stringify(updated));
-    await saveUserProfile(user.uid, updated);
+    await (await fb()).saveUserProfile(user.uid, updated);
   };
 
   const saveRoute = async (routeData) => {
-    if (!user) return;
-    const saved = await dbSaveUserRoute(user.uid, routeData);
+    let saved;
+    if (user) saved = await (await fb()).saveUserRoute(user.uid, routeData);
+    else if (!accountsAvailable) saved = saveDeviceRoute(routeData);
+    else throw new Error("Sign in to save routes.");
     setSavedRoutes((prev) => [saved, ...prev.filter((r) => r.id !== saved.id)]);
     return saved;
   };
 
   const resetPassword = async (email) => {
-    if (auth) {
-      await sendPasswordResetEmail(auth, email);
-    }
+    const f = await firebaseOrThrow();
+    await f.sendPasswordResetEmail(f.auth, email);
   };
 
   return (
@@ -251,16 +124,16 @@ export function AuthProvider({ children }) {
       value={{
         user,
         loading,
+        accountsAvailable,
         login,
         signup,
         loginWithGoogle,
-        loginAsDemo,
         logout,
         updateProfileData,
         saveRoute,
         savedRoutes,
         resetPassword,
-        refreshRoutes: () => user && loadUserRoutes(user.uid),
+        refreshRoutes: () => (user ? loadRoutes(user.uid) : setSavedRoutes(getDeviceRoutes())),
       }}
     >
       {children}

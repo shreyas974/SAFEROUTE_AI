@@ -12,13 +12,13 @@ export function RouteProvider({ children }) {
   const [error, setError] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
 
-  const fetchRoute = async (source, destination, hour = 21, srcName = "", dstName = "") => {
+  const fetchRoute = async (source, destination, hour = 21, srcName = "", dstName = "", safetyWeight = 3) => {
     setLoading(true);
     setError(null);
     if (srcName) setSourceName(srcName);
     if (dstName) setDestName(dstName);
     try {
-      const data = await getSafeRoute(source, destination, hour);
+      const data = await getSafeRoute(source, destination, hour, safetyWeight);
       setRouteData(data);
       setActiveRouteType("safest");
     } catch (err) {

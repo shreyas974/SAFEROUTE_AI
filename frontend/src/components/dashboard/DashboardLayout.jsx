@@ -1,6 +1,6 @@
 import SearchPanel from "./SearchPanel";
 import RiskMeter from "./RiskMeter";
-import AlertPanel from "./AlertPanel";
+import DataNotice from "../common/DataNotice";
 import RouteSummary from "./RouteSummary";
 import AIRecommendation from "./AIRecommendation";
 import MapView from "../map/MapView";
@@ -9,17 +9,20 @@ import NearbyCrimes from "./NearbyCrimes";
 
 function DashboardLayout() {
   return (
-    <main className="container py-8">
+    <main id="main" className="container py-8">
+      <h1 className="sr-only">Plan a route</h1>
+      <div className="mb-6">
+        <DataNotice />
+      </div>
       <div className="grid lg:grid-cols-12 gap-6">
         {/* Left Sidebar */}
-        <aside className="lg:col-span-3 space-y-6">
+        <aside className="lg:col-span-4 xl:col-span-3 space-y-6" aria-label="Route planning">
           <SearchPanel />
           <RiskMeter />
-          <AlertPanel />
         </aside>
 
         {/* Map */}
-        <section className="lg:col-span-9 space-y-6">
+        <section className="lg:col-span-8 xl:col-span-9 space-y-6" aria-label="Map and directions">
           <MapView />
           <DirectionsPanel />
         </section>
@@ -27,10 +30,10 @@ function DashboardLayout() {
 
       {/* Bottom Cards */}
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
-  <RouteSummary />
-  <AIRecommendation />
-  <NearbyCrimes />
-</div>
+        <RouteSummary />
+        <AIRecommendation />
+        <NearbyCrimes />
+      </div>
     </main>
   );
 }

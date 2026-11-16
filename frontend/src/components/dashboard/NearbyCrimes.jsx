@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import GlassCard from "../common/GlassCard";
 import { useRoute } from "../../context/RouteContext";
 import { getAllCrimes } from "../../services/crimeService";
-import { ShieldAlert, MapPin, Clock, FileText } from "lucide-react";
+import { ShieldAlert, MapPin, Clock } from "lucide-react";
 
 const THRESHOLD = 0.012; // Radius ~1.3 km
 
@@ -39,7 +39,7 @@ function NearbyCrimes() {
           <h2 className="text-xl font-bold text-white">Nearby Incident Analysis</h2>
         </div>
         <p className="text-sm text-slate-400">
-          Calculate a route to analyze historical incidents and police FIRs along the path.
+          Find a route to list the demo incidents recorded near it.
         </p>
       </GlassCard>
     );
@@ -49,7 +49,7 @@ function NearbyCrimes() {
     return (
       <GlassCard className="p-6 border border-white/10 shadow-xl rounded-2xl">
         <h2 className="text-xl font-bold text-white mb-2">Nearby Incident Analysis</h2>
-        <p className="text-xs text-slate-400">Loading verified police reports...</p>
+        <p className="text-xs text-slate-400">Loading incidents…</p>
       </GlassCard>
     );
   }
@@ -88,7 +88,7 @@ function NearbyCrimes() {
         </span>
       </div>
 
-      <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
+      <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1" tabIndex={0} role="region" aria-label="Demo incidents near the route">
         {nearby.length === 0 ? (
           <div className="text-center py-8 text-xs text-emerald-400 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
             ✓ No reported high-risk incidents along this route corridor!
@@ -122,12 +122,12 @@ function NearbyCrimes() {
                   </span>
                   {crime.Time && (
                     <span className="flex items-center gap-1">
-                      <Clock size={12} className="text-slate-500" />
+                      <Clock size={12} className="text-slate-400" />
                       {crime.Time}
                     </span>
                   )}
                   {crime.FIR_ID && (
-                    <span className="flex items-center gap-1 text-[11px] font-mono text-slate-500">
+                    <span className="flex items-center gap-1 text-[11px] font-mono text-slate-400">
                       FIR #{crime.FIR_ID}
                     </span>
                   )}

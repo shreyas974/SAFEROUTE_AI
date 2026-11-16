@@ -25,7 +25,7 @@ function AreaChart() {
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base font-bold text-white">Incidents by Bengaluru Area (Top 10)</h3>
-        <span className="text-[11px] text-slate-400">Police FIR Data</span>
+        <span className="text-[11px] text-slate-400">Demo data</span>
       </div>
       <div className="w-full h-72">
         <ResponsiveContainer width="100%" height="100%">

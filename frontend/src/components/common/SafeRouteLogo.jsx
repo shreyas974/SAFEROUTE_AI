@@ -1,4 +1,3 @@
-import React from "react";
 
 export function SafeRouteIcon({ size = 32, className = "" }) {
   return (

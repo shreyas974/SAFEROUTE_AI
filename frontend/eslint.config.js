@@ -13,6 +13,10 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
+    rules: {
+      // Context modules export their provider and its hook together.
+      'react-refresh/only-export-components': ['error', { allowExportNames: ['useAuth', 'useRoute'] }],
+    },
     languageOptions: {
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },

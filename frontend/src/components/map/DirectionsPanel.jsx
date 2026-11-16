@@ -1,7 +1,7 @@
 import {
   ArrowUp, ArrowUpRight, ArrowUpLeft,
   CornerUpRight, CornerUpLeft, Navigation, MapPin,
-  Clock, ShieldCheck,
+  ShieldCheck,
 } from "lucide-react";
 import { useRoute } from "../../context/RouteContext";
 import GlassCard from "../common/GlassCard";
@@ -35,7 +35,7 @@ function DirectionsPanel() {
       <GlassCard className="p-6 border border-white/10 shadow-xl rounded-2xl">
         <div className="flex items-center gap-3">
           <div className="w-5 h-5 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
-          <p className="text-sm text-slate-300">Engineering safe road corridor with OSRM...</p>
+          <p className="text-sm text-slate-300">Searching the road network…</p>
         </div>
       </GlassCard>
     );
@@ -45,7 +45,7 @@ function DirectionsPanel() {
     return (
       <GlassCard className="p-6 text-center border border-white/10 shadow-xl rounded-2xl">
         <Navigation className="mx-auto mb-2.5 text-cyan-400" size={26} />
-        <h4 className="text-base font-bold text-white mb-1">Live Turn-by-Turn Telemetry</h4>
+        <h4 className="text-base font-bold text-white mb-1">Turn-by-turn directions</h4>
         <p className="text-xs text-slate-400">
           Choose an origin and destination in the search panel to generate real street navigation.
         </p>
@@ -78,7 +78,7 @@ function DirectionsPanel() {
         </div>
       </div>
 
-      <ol className="space-y-1 max-h-[340px] overflow-y-auto pr-1">
+      <ol className="space-y-1 max-h-[340px] overflow-y-auto pr-1" tabIndex={0} aria-label="Turn-by-turn directions">
         {routeData.steps.map((step, index) => (
           <li
             key={index}

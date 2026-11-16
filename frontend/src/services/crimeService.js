@@ -1,47 +1,27 @@
-import crimesData from "../data/crimesData.json";
-import hotspotsData from "../data/hotspotsData.json";
+import { api } from "./api";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:5000";
+// The map and the nearby-incidents card both need the full list: fetch it once per page load.
+let allCrimes = null;
 
-// Get all crimes
-export async function getAllCrimes() {
-  if (API_BASE_URL && !API_BASE_URL.includes("localhost") && !API_BASE_URL.includes("127.0.0.1")) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-      const response = await fetch(`${API_BASE_URL}/crimes`, { signal: controller.signal });
-      clearTimeout(timeoutId);
-      if (response.ok) return await response.json();
-    } catch (e) {
-      console.info("[SafeRoute AI] Using verified Bangalore dataset for crimes");
-    }
-  }
-  return crimesData;
+/** Incidents for the map (the bundled demo set is ~6k rows). */
+export function getAllCrimes() {
+  allCrimes ??= api("/incidents?limit=10000").then((d) => d.items);
+  allCrimes.catch(() => (allCrimes = null)); // let a later call retry after a failure
+  return allCrimes;
 }
 
-// Get only high-risk crime hotspots
-export async function getHighRiskCrimes() {
-  if (API_BASE_URL && !API_BASE_URL.includes("localhost") && !API_BASE_URL.includes("127.0.0.1")) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-      const response = await fetch(`${API_BASE_URL}/crime-hotspots`, { signal: controller.signal });
-      clearTimeout(timeoutId);
-      if (response.ok) return await response.json();
-    } catch (e) {
-      console.info("[SafeRoute AI] Using verified hotspot clusters");
-    }
-  }
-  return hotspotsData;
+export async function getHighRiskCrimes({ signal } = {}) {
+  return (await api("/incidents?severity=High&limit=10000", { signal })).items;
 }
 
-// Get crime by ID
-export async function getCrimeById(id) {
-  const crimes = await getAllCrimes();
-  return crimes.find(
-    (crime) =>
-      crime.id === id ||
-      crime.ID === id ||
-      crime.FIR_ID === id
-  );
+export async function getHotspots({ signal } = {}) {
+  return api("/hotspots", { signal });
+}
+
+export async function getDatasetInfo({ signal } = {}) {
+  return (await api("/meta", { signal })).dataset;
+}
+
+export async function getAreas({ signal } = {}) {
+  return api("/areas", { signal });
 }

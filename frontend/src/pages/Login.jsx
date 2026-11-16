@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { 
-  Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, 
-  Sparkles, AlertCircle 
+  Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle 
 } from "lucide-react";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
@@ -13,12 +12,11 @@ import toast from "react-hot-toast";
 
 function Login() {
   const navigate = useNavigate();
-  const { login, loginWithGoogle, loginAsDemo, resetPassword } = useAuth();
+  const { login, loginWithGoogle, resetPassword, accountsAvailable } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [forgotModalOpen, setForgotModalOpen] = useState(false);
@@ -31,7 +29,7 @@ function Login() {
     setLoading(true);
     try {
       await login(email, password);
-      toast.success("Welcome back to SafeRoute AI!");
+      toast.success("Signed in.");
       navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Invalid email or password. Please try again.");
@@ -49,17 +47,6 @@ function Login() {
       navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Google sign-in was interrupted.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleDemoLogin() {
-    setLoading(true);
-    try {
-      await loginAsDemo();
-      toast.success("Logged in as Enterprise Safety Lead!");
-      navigate("/dashboard");
     } finally {
       setLoading(false);
     }
@@ -94,12 +81,19 @@ function Login() {
                 <SafeRouteLogo size="lg" />
               </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                Enterprise Sign In
+                Sign in
               </h1>
               <p className="text-xs sm:text-sm text-slate-400 mt-1.5">
-                Access AI crime analytics, safety heatmaps, and routing.
+                Optional: an account keeps your saved routes across devices.
               </p>
             </div>
+
+            {!accountsAvailable && (
+              <div role="note" className="mb-6 rounded-xl bg-amber-500/10 border border-amber-400/40 p-4 text-sm text-amber-100">
+                <strong className="block text-amber-200 mb-1">Accounts are not set up on this deployment.</strong>
+                You don't need one: plan routes on the <Link to="/dashboard" className="underline font-semibold">map</Link>, and saved routes stay on this device.
+              </div>
+            )}
 
             {/* Error Notification */}
             {error && (
@@ -109,12 +103,12 @@ function Login() {
               </div>
             )}
 
-            {/* Social / Demo One-Click Sign In */}
+            {/* Social sign-in */}
             <div className="space-y-3 mb-6">
               <button
                 type="button"
                 onClick={handleGoogleLogin}
-                disabled={loading}
+                disabled={loading || !accountsAvailable}
                 className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold tracking-wide transition shadow-sm active:scale-[0.99]"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -138,20 +132,12 @@ function Login() {
                 Continue with Google
               </button>
 
-              <button
-                type="button"
-                onClick={handleDemoLogin}
-                disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-xs font-semibold tracking-wide transition shadow-sm active:scale-[0.99]"
-              >
-                <Sparkles size={14} className="text-cyan-400" />
-                One-Click Demo Account (Instant Access)
-              </button>
+
             </div>
 
             <div className="relative flex items-center justify-center mb-6">
               <div className="border-t border-white/10 w-full" />
-              <span className="bg-slate-900 px-3 text-[11px] font-medium text-slate-500 uppercase tracking-widest shrink-0">
+              <span className="bg-slate-900 px-3 text-[11px] font-medium text-slate-400 uppercase tracking-widest shrink-0">
                 Or with email
               </span>
               <div className="border-t border-white/10 w-full" />
@@ -202,7 +188,9 @@ function Login() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-pressed={showPassword}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 min-w-[32px] min-h-[32px] grid place-items-center rounded-lg text-slate-300 hover:text-white"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -210,27 +198,18 @@ function Login() {
               </div>
 
               <div className="flex items-center justify-between pt-1">
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="rounded bg-white/10 border-white/20 text-blue-600 focus:ring-blue-500 h-3.5 w-3.5"
-                  />
-                  <span className="text-xs text-slate-400">Remember on this device</span>
-                </label>
               </div>
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !accountsAvailable}
                 className="w-full mt-2 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-semibold tracking-wide transition shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 active:scale-[0.99] disabled:opacity-60"
               >
                 {loading ? (
-                  <span>Authenticating...</span>
+                  <span>Signing in…</span>
                 ) : (
                   <>
-                    <span>Sign In to Dashboard</span>
+                    <span>Sign in</span>
                     <ArrowRight size={16} />
                   </>
                 )}
@@ -239,7 +218,7 @@ function Login() {
 
             {/* Footer switcher */}
             <p className="text-center text-xs text-slate-400 mt-6 pt-4 border-t border-white/10">
-              Don't have an enterprise account?{" "}
+              No account yet?{" "}
               <Link to="/signup" className="text-cyan-400 hover:text-cyan-300 font-semibold transition">
                 Create Account
               </Link>

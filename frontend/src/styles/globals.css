@@ -44,3 +44,10 @@ img {
   margin-left: auto;
   margin-right: auto;
 }
+/* Dark basemap from standard OSM tiles: invert only the tile layer, never markers or routes. */
+.map-dark .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+/* Leaflet cluster counts: dark text on the plugin's light badges (white on orange was 2.1:1). */
+.marker-cluster div { color: #0f172a; font-weight: 700; }

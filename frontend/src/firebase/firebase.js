@@ -18,41 +18,39 @@ import {
   getDoc,
   getDocs,
   addDoc,
-  deleteDoc,
   query,
   orderBy,
   limit,
-  serverTimestamp,
-} from "firebase/firestore";
+  } from "firebase/firestore";
 
-// Firebase credentials from Vite environment or safe production fallback
+// Firebase is used only when this deployment provides its own project settings. There is no
+// fallback project: without VITE_FIREBASE_* the app runs without accounts (routes stay on the device).
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSySafeRouteEnterpriseKey2026",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "saferoute-ai.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "saferoute-ai",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "saferoute-ai.appspot.com",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "91827364501",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:91827364501:web:1029384756abcdef",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-export const isFirebaseConfigured = Boolean(
-  import.meta.env.VITE_FIREBASE_API_KEY &&
-  import.meta.env.VITE_FIREBASE_PROJECT_ID
-);
+export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
 
 let app;
 let auth;
 let db;
 let googleProvider;
 
-try {
-  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-  auth = getAuth(app);
-  db = getFirestore(app);
-  googleProvider = new GoogleAuthProvider();
-  googleProvider.setCustomParameters({ prompt: "select_account" });
-} catch (err) {
-  console.warn("[SafeRoute AI] Running with resilient local storage adapter:", err.message);
+if (isFirebaseConfigured) {
+  try {
+    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+    auth = getAuth(app);
+    db = getFirestore(app);
+    googleProvider = new GoogleAuthProvider();
+    googleProvider.setCustomParameters({ prompt: "select_account" });
+  } catch (err) {
+    console.error("[SafeRoute] Firebase could not start:", err.message);
+  }
 }
 
 // -------------------------------------------------------------
@@ -104,7 +102,9 @@ export async function getUserProfile(uid) {
   try {
     const raw = localStorage.getItem(`${STORAGE_KEYS.USER_PROFILE}_${uid}`);
     if (raw) localData = JSON.parse(raw);
-  } catch (e) {}
+  } catch {
+    /* browser storage unavailable: continue without it */
+  }
 
   if (db && isFirebaseConfigured) {
     try {
@@ -145,7 +145,9 @@ export async function saveUserRoute(uid, route) {
     const existing = JSON.parse(localStorage.getItem(`${STORAGE_KEYS.SAVED_ROUTES}_${uid}`) || "[]");
     const updated = [routeRecord, ...existing.filter((r) => r.id !== routeRecord.id)].slice(0, 50);
     localStorage.setItem(`${STORAGE_KEYS.SAVED_ROUTES}_${uid}`, JSON.stringify(updated));
-  } catch (e) {}
+  } catch {
+    /* browser storage unavailable: continue without it */
+  }
 
   // Firestore save
   if (db && isFirebaseConfigured) {
@@ -167,7 +169,9 @@ export async function getUserRoutes(uid) {
   try {
     const raw = localStorage.getItem(`${STORAGE_KEYS.SAVED_ROUTES}_${uid}`);
     if (raw) return JSON.parse(raw);
-  } catch (e) {}
+  } catch {
+    /* browser storage unavailable: continue without it */
+  }
 
   if (db && isFirebaseConfigured) {
     try {
@@ -177,7 +181,9 @@ export async function getUserRoutes(uid) {
       const results = [];
       snap.forEach((d) => results.push({ id: d.id, ...d.data() }));
       return results;
-    } catch (e) {}
+    } catch {
+    /* browser storage unavailable: continue without it */
+  }
   }
 
   // Initial company demo sample routes if empty
@@ -212,19 +218,23 @@ export async function submitIncidentReport(report) {
   const incidentRecord = {
     id: `inc_${Date.now()}`,
     ...report,
-    status: "Verified",
+    status: "Unverified",  // user reports are never verified automatically
     timestamp: new Date().toISOString(),
   };
 
   try {
     const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.INCIDENTS) || "[]");
     localStorage.setItem(STORAGE_KEYS.INCIDENTS, JSON.stringify([incidentRecord, ...existing]));
-  } catch (e) {}
+  } catch {
+    /* browser storage unavailable: continue without it */
+  }
 
   if (db && isFirebaseConfigured) {
     try {
       await addDoc(collection(db, "incidents"), incidentRecord);
-    } catch (e) {}
+    } catch {
+    /* browser storage unavailable: continue without it */
+  }
   }
 
   return incidentRecord;

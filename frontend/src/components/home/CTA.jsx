@@ -6,8 +6,8 @@ function CTA() {
   const navigate = useNavigate();
 
   return (
-    <section className="container mx-auto px-4 py-20 relative">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] bg-blue-600/15 blur-3xl rounded-full pointer-events-none" />
+    <section className="container mx-auto px-4 py-20 relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(500px,100%)] h-[250px]  bg-blue-600/15 blur-3xl rounded-full pointer-events-none" />
       
       <GlassCard className="p-10 sm:p-14 text-center border border-white/10 shadow-2xl backdrop-blur-2xl bg-slate-900/60 rounded-3xl relative z-10">
         <h2 className="mb-4 text-3xl sm:text-5xl font-extrabold text-white tracking-tight">

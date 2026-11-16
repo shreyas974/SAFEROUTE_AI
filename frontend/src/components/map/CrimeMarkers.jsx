@@ -80,7 +80,7 @@ function CrimeMarkers() {
                 <div style={{ fontSize: "11px", color: "#475569", lineHeight: "1.5" }}>
                   <div>📍 <strong>{crime.Area}</strong></div>
                   {crime.Time && <div>🕒 {crime.Time}</div>}
-                  {crime.FIR_ID && <div style={{ color: "#64748b", marginTop: "4px" }}>FIR #{crime.FIR_ID}</div>}
+                  {crime.FIR_ID && <div style={{ color: "#64748b", marginTop: "4px" }}>Demo record {crime.FIR_ID}</div>}
                 </div>
               </div>
             </Popup>
